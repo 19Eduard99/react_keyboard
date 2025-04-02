@@ -1,23 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import { PureComponent } from 'react';
 
-export const App: React.FC = () => {
-  const [message, setMessage] = useState('Nothing was pressed yet');
-
-  useEffect(() => {
-    const handleClick = (e: KeyboardEvent) => {
-      setMessage(`The last pressed key is [${e.key}]`);
-    };
-
-    document.addEventListener('keyup', handleClick);
-
-    return () => {
-      document.removeEventListener('keyup', handleClick);
-    };
-  }, [message]);
-
-  return (
-    <div className="App">
-      <p className="App__message">{message}</p>
-    </div>
-  );
+type State = {
+  message: string;
 };
+
+export class App extends PureComponent {
+  state: Readonly<State> = {
+    message: 'Nothing was pressed yet',
+  };
+
+  handleClick = (e: KeyboardEvent) => {
+    this.setState({
+      message: `The last pressed key is [${e.key}]`,
+    });
+  };
+
+  componentDidMount() {
+    document.addEventListener('keyup', this.handleClick);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.handleClick);
+  }
+
+  render() {
+    const { message } = this.state;
+
+    return (
+      <div className="App">
+        <p className="App__message">{message}</p>
+      </div>
+    );
+  }
+}
